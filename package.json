@@ -1,5 +1,5 @@
 {
-  "name": "react-webpack-typescript",
+  "name": "news-agregator",
   "scripts": {
     "start": "webpack serve --mode development",
     "lint": "eslint --ext .ts src",
