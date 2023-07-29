@@ -33,7 +33,8 @@ module.exports = {
         "no-var": ["error"],
         "eqeqeq": ["error"],
         "max-lines": ["warn", 200],
-        semi: ["warn", "never"],
+        "semi": ["warn", "never"],
         "arrow-spacing": "warn",
+        "@typescript-eslint/consistent-type-definitions": ["warn", "type"]
     },
   };
