@@ -1,9 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import Hello from './Hello'
+
+import App from './app/App'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <Hello/>
+        <App/>
     </React.StrictMode>
 )
