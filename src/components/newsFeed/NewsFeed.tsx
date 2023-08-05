@@ -1,3 +1,5 @@
+import { useNews } from '../../utils/hooks/useNews'
+
 const newsArray = [
     {
         title: 'Title',
@@ -13,6 +15,11 @@ const newsArray = [
     }
 ]
 export default function NewsFeed() {
+
+    const articles = useNews()
+    console.log(articles)
+    
+    
     return (
         <section>
             <ul>
