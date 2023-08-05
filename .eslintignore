@@ -4,4 +4,4 @@ build
 webpack.config.js
 *.cjs
 *.config.ts
-/src/backend
+/backend
