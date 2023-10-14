@@ -1,7 +1,7 @@
 const express = require('express')
 const bodyParser = require("body-parser")
 import cors from 'cors'
-import { createProxyMiddleware } from 'http-proxy-middleware'
+// import { createProxyMiddleware } from 'http-proxy-middleware'
 import os from 'os'
 
 const app = express()

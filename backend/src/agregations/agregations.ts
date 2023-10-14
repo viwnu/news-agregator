@@ -1,7 +1,7 @@
 import express from 'express'
 import { kv } from '@vercel/kv'
 
-const {readBundle, writeBundle, deleteBundle} = require('../fileIO/fileIOHandler.ts')
+const {readBundle, writeBundle, deleteBundle} = require('../fileIO/fileIOHandler')
 
 const router = express.Router()
 

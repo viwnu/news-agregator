@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const kv_1 = require("@vercel/kv");
-const { readBundle, writeBundle, deleteBundle } = require('../fileIO/fileIOHandler.ts');
+const { readBundle, writeBundle, deleteBundle } = require('../fileIO/fileIOHandler');
 const router = express_1.default.Router();
 const dataBaseFilePath = 'src/agregations/agregations.txt';
 router.get('/', function (req, res) { res.send('hellow dura4ok'); });
