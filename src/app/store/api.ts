@@ -6,7 +6,7 @@ import
 export const rootAPISlice = createApi({
   reducerPath: 'apiSlice',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:8000'
+    baseUrl: '/api'
   }),
   tagTypes: ['agregation'],
   endpoints: (builder) => ({
