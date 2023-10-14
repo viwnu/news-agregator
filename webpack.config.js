@@ -5,7 +5,7 @@ module.exports = {
   entry: './src/index.tsx',
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),//for Github Pages
+    path: path.resolve(__dirname, 'backend/public'),//for Github Pages
     clean: true,
   },
   plugins: [

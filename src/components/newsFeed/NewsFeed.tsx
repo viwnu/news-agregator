@@ -1,4 +1,4 @@
-import { useNews } from '../../utils/hooks/useNews'
+// import { useNews } from '../../utils/hooks/useNews'
 
 const newsArray = [
     {
@@ -16,8 +16,8 @@ const newsArray = [
 ]
 export default function NewsFeed() {
 
-    const articles = useNews()
-    console.log(articles)
+    // const articles = useNews()
+    // console.log(articles)
     
     
     return (

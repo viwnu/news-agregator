@@ -1,97 +1,29 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-const PORT = 8000
-
-import os from 'os'
-import express, { Express, Request, Response } from 'express'
+const express = require('express')
+const bodyParser = require("body-parser")
 import cors from 'cors'
 import { createProxyMiddleware } from 'http-proxy-middleware'
-import axios from 'axios'
-import * as cheerio from 'cheerio'
+import os from 'os'
 
-const app: Express = express()
+const app = express()
+const port = 8000
 
 app.use(cors({
-    exposedHeaders: '*'
+  exposedHeaders: '*'
 }))
 
-app.use('/api', createProxyMiddleware({ target: 'http://localhost:8000', changeOrigin: true }))
+// app.use('/api', createProxyMiddleware({ target: `http://localhost:${port}`, changeOrigin: true }))
 
-app.get('/', (req:Request, res:Response) => {
-    res.json('jaha')
-})
+const routes = require('./routes/index')
 
-const newsSourses = [
-    {
-        name: "coin360",
-        adress: 'https://coin360.com/news',
-        base: '',
-    },
-    {
-        name: "coindesk",
-        adress: 'https://www.coindesk.com',
-        base: '',
-    },
-    {
-        name: "cointelegraph",
-        adress: 'https://cointelegraph.com/',
-        base: '',
-    },
-    {
-        name: "crypto.com",
-        adress: 'https://crypto.com/trending',
-        base: 'https://crypto.com',
-    },
-    {
-        name: "crypto.news",
-        adress: 'https://crypto.news/',
-        base: '',
-    },
-    {
-        name: "cryptopotato",
-        adress: 'https://cryptopotato.com/',
-        base: '',
-    }
-    
-]
+// const messagesRouter = require('./routes/messages')
 
-type Article = {
-  url: string;
-  source: string;
-  title:string;
-}
+//Here we are configuring express to use body-parser as middle-ware.
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-const articles: Article[] = []
+// add router in express app
+app.use("/api",routes)
 
-
-newsSourses.forEach(source => {
-    axios.get(source.adress)
-        .then(((response: { data: any }) => {
-            const html = response.data
-            const $ = cheerio.load(html)
-            $('a', html).slice(0,100).each(function (i: number, elem: any) {
-                const title = $(elem).text()
-                const url = $(elem).attr('href')
-                articles.push({
-                    title,
-                    url: source.base + url,
-                    source: source.name
-                })
-            })
-            
-        })).catch((e:Error) => console.log(e))
-})
-
-app.get('/news', (req: Request, res: Response) => {
-    res.json(articles)
-})
-
-app.get('/news/:sourceId', (req: Request, res: Response) => {
-    const sourceId = req.params.sourceId
-    
-    const specificArticles = articles.filter(article => article.source == sourceId)
-    res.json(specificArticles)
-})
-
-app.listen(PORT, () => {
-    console.log(`Server running at http://${os.hostname()}:${PORT}/`);
+app.listen(port, () => {
+  console.log(`Server running at http://${os.hostname()}:${port}/`)
 })
