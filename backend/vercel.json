@@ -1,0 +1,12 @@
+{
+    "functions": {
+      "api/deep.js": {
+        "memory": 1024,
+        "maxDuration": 10
+      },
+      "api/get-single-agregation.js": {
+        "memory": 1024,
+        "maxDuration": 10
+      }
+    }
+  }

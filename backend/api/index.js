@@ -14,13 +14,13 @@ app.use((0, cors_1.default)({
     exposedHeaders: '*'
 }));
 // app.use('/api', createProxyMiddleware({ target: `http://localhost:${port}`, changeOrigin: true }))
-const routes = require('./routes/index');
+const index_1 = __importDefault(require("./routes/index"));
 // const messagesRouter = require('./routes/messages')
 //Here we are configuring express to use body-parser as middle-ware.
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 // add router in express app
-app.use("/api", routes);
+app.use("/api", index_1.default);
 app.listen(port, () => {
     console.log(`Server running at http://${os_1.default.hostname()}:${port}/`);
 });

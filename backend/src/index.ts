@@ -13,7 +13,7 @@ app.use(cors({
 
 // app.use('/api', createProxyMiddleware({ target: `http://localhost:${port}`, changeOrigin: true }))
 
-const routes = require('./routes/index')
+import routes from './routes/index'
 
 // const messagesRouter = require('./routes/messages')
 

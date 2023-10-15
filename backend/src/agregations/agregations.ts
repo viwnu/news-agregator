@@ -1,5 +1,4 @@
 import express from 'express'
-import { kv } from '@vercel/kv'
 
 const {readBundle, writeBundle, deleteBundle} = require('../fileIO/fileIOHandler')
 
@@ -7,7 +6,7 @@ const router = express.Router()
 
 const dataBaseFilePath = 'src/agregations/agregations.txt'
 
-router.get('/', function (req: any, res) { res.send('hellow dura4ok') })
+router.get('/', function (req: any, res) { res.send('hellow from agregations lvl') })
 
 router.post('/send', async function(req: {body: object} ,res: { send: (arg0: { sendData: any }) => void }){
     // console.log(`Заголовки запроса: ${Object.keys(req)}`);
@@ -17,11 +16,6 @@ router.post('/send', async function(req: {body: object} ,res: { send: (arg0: { s
         console.log('in data obj')
         console.log(data[key as keyof typeof data])
     }
-    try {
-      const listLength = await kv.lpush('agregations', data)
-    } catch (error) {
-      console.log('in agregations/send: ', error)
-    }
     writeBundle(dataBaseFilePath, JSON.stringify(data))
       .then((sendData: any) => {
         console.log('the response from fileIO: ', sendData)
@@ -30,12 +24,6 @@ router.post('/send', async function(req: {body: object} ,res: { send: (arg0: { s
 })  
 
 router.get("/get", async (req: any, res) => {
-    try {
-      const list = await kv.lrange('agregations', 0, -1);
-      console.log(list)
-    } catch (error) {
-      console.log('in agregations/get: ', error)
-    }
     readBundle(dataBaseFilePath, 10)
       .then((data: {dataStr: string}[]) => {
           console.log('the response from fileIO: ', data)

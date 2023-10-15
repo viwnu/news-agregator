@@ -14,8 +14,12 @@ import { InputKeyboardEvent } from './useAgregationForm'
 
 export default function AgregatorForm() {
     const {
-        newAgregation, onKeyDown, onKeyUp, deleteKeyword, changeEndpoint, setNewAgreagtion
+        newAgregation, urlInvalid, onKeyDown, onKeyUp, deleteKeyword, changeEndpoint, setNewAgreagtion
     } = useAgregationForm()
+
+    console.log('in agregation form', newAgregation)
+    console.log('url is valid', urlInvalid)
+
 
     const { agregationId } = useParams()
     console.log('Id from params', agregationId)
@@ -32,6 +36,7 @@ export default function AgregatorForm() {
         if (isFetching) {
             console.log('agreagtion fetching')
         } else if (isSuccess) {
+            console.log('isSuccess = ', isSuccess)
             console.log('agregation: ', agregation)
             setNewAgreagtion({...newAgregation, ...agregation})
         } else if (isError) {
@@ -40,7 +45,6 @@ export default function AgregatorForm() {
                 setNewAgreagtion({
                     title: '',
                     url: '',
-                    urlInvalid: false,
                     keywords: [],
                     id: nanoid()
                 })
@@ -53,12 +57,18 @@ export default function AgregatorForm() {
     const [deleteAgregation, { isLoading: isDeleting }] = useDeleteAgregationMutation()
 
     const handleSubmit = async () => {
+        console.log('handle submit hav an agregation: ', agregation)
+        console.log('handle submit hav an new agregation: ', newAgregation)
+
+        
         try {
             if (agregationId !== undefined) {
                 console.log('ready to patch')
-                if(!isPatching) void await patchAgregation(newAgregation)
+                if(!isPatching && !urlInvalid) void await patchAgregation(newAgregation)
             } else {
-                if(!isAdding) {
+                if(!isAdding && !urlInvalid) {
+                    setNewAgreagtion({...newAgregation, id: nanoid()})
+                    console.log('then adding: ', newAgregation)
                     void await addAgregation(newAgregation)
                 }
             }
@@ -106,7 +116,7 @@ export default function AgregatorForm() {
                             size='small'
                         />
                         <TextField
-                            error={newAgregation.urlInvalid}
+                            error={urlInvalid}
                             ref={endpointInputRef}
                             label='Endpoint'
                             value={newAgregation.url}

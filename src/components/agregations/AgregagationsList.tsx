@@ -17,6 +17,7 @@ export default function AgregagationsList() {
         content = <CircularProgress/>
     } else if (isSuccess) {
         const agregations = resBody.agregations
+        console.log('agregations is: ', agregations)
         content = <List>
             {agregations.map(agregation => (
                 <ListItem key = {agregation.id}>                    

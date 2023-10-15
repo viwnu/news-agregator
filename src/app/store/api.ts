@@ -3,6 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react'
 import
 { Agregation, type AgregationsState } from '../types/redux'
 
+
 export const rootAPISlice = createApi({
   reducerPath: 'apiSlice',
   baseQuery: fetchBaseQuery({
@@ -11,7 +12,7 @@ export const rootAPISlice = createApi({
   tagTypes: ['agregation'],
   endpoints: (builder) => ({
     getAgregations: builder.query<AgregationsState, void>({
-        query: () => '/agregations/get',
+        query: () => '/',
         providesTags: (result) =>
           result?
             [
@@ -24,13 +25,13 @@ export const rootAPISlice = createApi({
         }
     }),
     getSingleAgregation: builder.query({
-      query: postId => `/agregations/get/${postId}`,
+      query: agregationId => `/get-single-agregation/?id=${agregationId}`,
       providesTags: (result, error, arg: string) => [{ type: 'agregation', id: arg }],
       transformResponse: (responseData: Agregation) => responseData
     }),
     addAgregation: builder.mutation({
       query: agregation => ({
-        url: '/agregations/send',
+        url: '/',
         method: 'POST',
         body: agregation as object
       }),
@@ -38,7 +39,7 @@ export const rootAPISlice = createApi({
     }),
     patchAgregation: builder.mutation({
       query: (agregation: Agregation) => ({
-        url: `/agregations/patch/${agregation.id}`,
+        url: `/?id=${agregation.id}`,
         method: 'PATCH',
         body: agregation
       }),
@@ -46,7 +47,7 @@ export const rootAPISlice = createApi({
     }),
     deleteAgregation: builder.mutation({
       query: (agregation: Agregation) => ({
-        url: `/agregations/delete/${agregation.id}`,
+        url: `/?id=${agregation.id}`,
         method: 'DELETE',
         body: agregation
       }),

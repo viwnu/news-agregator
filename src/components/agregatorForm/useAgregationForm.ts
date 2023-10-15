@@ -13,9 +13,10 @@ export default function useAgregationForm() {
         id: '',
         title: '',
         url: '',
-        urlInvalid: false,
         keywords: [] as string[],
-    })    
+    })
+
+    const [urlInvalid, setUrlvalidity] = useState(false)
 
     const [isKeyReleased, setIsKeyReleased] = useState(false)
 
@@ -56,13 +57,14 @@ export default function useAgregationForm() {
     const changeEndpoint = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         // eslint-disable-next-line no-useless-escape
         const re = /^(https?:\/\/.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/gm
+        setNewAgreagtion({...newAgregation, url: e.target.value})
         re.test(e.target.value)
-            ? setNewAgreagtion({...newAgregation, url: e.target.value, urlInvalid: false})
-            : setNewAgreagtion({...newAgregation, url: e.target.value, urlInvalid: true})
+            ? setUrlvalidity(false)
+            : setUrlvalidity(true)
     }
 
     
 
-    return {newAgregation, onKeyDown, onKeyUp, deleteKeyword, changeEndpoint, setNewAgreagtion}
+    return {newAgregation, urlInvalid, onKeyDown, onKeyUp, deleteKeyword, changeEndpoint, setNewAgreagtion}
 
 }
