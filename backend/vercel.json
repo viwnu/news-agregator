@@ -7,6 +7,10 @@
       "api/get-single-agregation.js": {
         "memory": 1024,
         "maxDuration": 10
+      },
+      "api/news.js": {
+        "memory": 1024,
+        "maxDuration": 10
       }
     }
   }
