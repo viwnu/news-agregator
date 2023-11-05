@@ -27,7 +27,7 @@ router.post('/', function (req, res) {
             console.log(data[key]);
         }
         try {
-            const setresult = yield kv_1.kv.set(data.id, data);
+            const setresult = yield kv_1.kv.set(data.id, JSON.stringify(data));
             console.log('setResult is: ', setresult);
             let numberOfAdded = 0;
             if (setresult === 'OK')
@@ -51,6 +51,9 @@ router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 const item = yield kv_1.kv.get(id);
                 console.log(item);
                 list.push(item);
+                // For local dev:
+                // console.log(JSON.parse(item as string))
+                // list.push(JSON.parse(item as string))
             }
             return list;
         });

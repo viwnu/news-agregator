@@ -1,6 +1,6 @@
 {
     "functions": {
-      "api/deep.js": {
+      "api/dev.js": {
         "memory": 1024,
         "maxDuration": 10
       },

@@ -13,6 +13,8 @@ export default function useAgregationForm() {
         id: '',
         title: '',
         url: '',
+        baseUrl: '',
+        selector: '',
         keywords: [] as string[],
     })
 

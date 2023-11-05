@@ -22,83 +22,95 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const puppeteer_core_1 = __importDefault(require("puppeteer-core"));
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const PORT = 8000;
 const os_1 = __importDefault(require("os"));
 const express_1 = __importDefault(require("express"));
+const body_parser_1 = __importDefault(require("body-parser"));
 const cors_1 = __importDefault(require("cors"));
-const http_proxy_middleware_1 = require("http-proxy-middleware");
-const axios_1 = __importDefault(require("axios"));
 const cheerio = __importStar(require("cheerio"));
-const app = (0, express_1.default)();
-app.use((0, cors_1.default)({
-    exposedHeaders: '*'
+require('dotenv').config();
+const news = (0, express_1.default)();
+// for local dev:
+// const news = express.Router()
+news.use((0, cors_1.default)({
+    origin: '*'
 }));
-app.use('/api', (0, http_proxy_middleware_1.createProxyMiddleware)({ target: 'http://localhost:8000', changeOrigin: true }));
-app.get('/', (req, res) => {
-    res.json('jaha');
-});
-const newsSourses = [
-    {
-        name: "coin360",
-        adress: 'https://coin360.com/news',
-        base: '',
-    },
-    {
-        name: "coindesk",
-        adress: 'https://www.coindesk.com',
-        base: '',
-    },
-    {
-        name: "cointelegraph",
-        adress: 'https://cointelegraph.com/',
-        base: '',
-    },
-    {
-        name: "crypto.com",
-        adress: 'https://crypto.com/trending',
-        base: 'https://crypto.com',
-    },
-    {
-        name: "crypto.news",
-        adress: 'https://crypto.news/',
-        base: '',
-    },
-    {
-        name: "cryptopotato",
-        adress: 'https://cryptopotato.com/',
-        base: '',
-    }
-];
+//Here we are configuring express to use body-parser as middle-ware.
+news.use(body_parser_1.default.urlencoded({ extended: false }));
+news.use(body_parser_1.default.json());
 const articles = [];
-newsSourses.forEach(source => {
-    axios_1.default.get(source.adress)
-        .then(((response) => {
-        const html = response.data;
-        const $ = cheerio.load(html);
-        $('a', html).slice(0, 100).each(function (i, elem) {
-            const title = $(elem).text();
-            const url = $(elem).attr('href');
-            articles.push({
-                title,
-                url: source.base + url,
-                source: source.name
-            });
+const getSpaHtml = (url) => __awaiter(void 0, void 0, void 0, function* () {
+    let browser = null;
+    try {
+        console.log('in getSpaHtml browser before: ', browser);
+        browser = yield puppeteer_core_1.default.connect({ browserWSEndpoint: `wss://chrome.browserless.io?token=${process.env.CLOUD_BROWSERLESS}` });
+        console.log('after: ', browser);
+        const page = yield browser.newPage();
+        yield page.goto(url);
+        yield new Promise(r => setTimeout(r, 2000));
+        const html = yield page.evaluate(() => {
+            var _a;
+            return (_a = document.querySelector('html')) === null || _a === void 0 ? void 0 : _a.innerHTML;
         });
-    })).catch((e) => console.log(e));
+        yield browser.close();
+        return html ? html : '';
+    }
+    catch (error) {
+        console.log('in get SPA HTML: ', error);
+        return `${error}`;
+    }
 });
-app.get('/news', (req, res) => {
-    res.json(articles);
+const fetchArticles = (newsSourse) => __awaiter(void 0, void 0, void 0, function* () {
+    let articles = [];
+    const html = yield getSpaHtml(newsSourse.url);
+    const $ = cheerio.load(html);
+    // writeFileSync('cherio.html', $.html())
+    $('a', html).slice(0, 200).each(function (i, elem) {
+        var _a;
+        const splitSelector = () => newsSourse.selector.split(' ');
+        const contents = newsSourse.selector.length === 0
+            ? $(elem).text()
+            : splitSelector().length > 1 && splitSelector()[1] === '<'
+                ? $(elem).closest(splitSelector()[0]).text()
+                : $(elem).find(newsSourse.selector).text();
+        if (contents.length > 0) {
+            articles.push({
+                id: i,
+                title: contents,
+                url: (_a = newsSourse.baseUrl + $(elem).attr('href')) !== null && _a !== void 0 ? _a : '',
+                source: newsSourse.title
+            });
+        }
+    });
+    return articles;
 });
-app.get('/news/:sourceId', (req, res) => {
-    const sourceId = req.params.sourceId;
-    const specificArticles = articles.filter(article => article.source == sourceId);
-    res.json(specificArticles);
-});
-app.listen(PORT, () => {
+news.get('/api/news', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const source = req.query;
+        console.log('source = ', source);
+        res.send(yield fetchArticles(source));
+    }
+    catch (error) {
+        console.log('in api/news error: ', error);
+        res.status(500).send('then api/news error: ' + error);
+    }
+}));
+news.listen(PORT, () => {
     console.log(`Server running at http://${os_1.default.hostname()}:${PORT}/`);
 });
+exports.default = news;

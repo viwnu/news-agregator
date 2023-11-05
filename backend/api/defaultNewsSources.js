@@ -1,4 +1,7 @@
-export const newsSourses = [
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.newsSourses = void 0;
+exports.newsSourses = [
     {
         id: '0',
         title: 'coin360',
@@ -6,7 +9,6 @@ export const newsSourses = [
         baseUrl: 'https://coin360.com',
         selector: '.F_ak2x',
         keywords: ["1"]
-
     },
     {
         id: '2',
@@ -40,5 +42,4 @@ export const newsSourses = [
         selector: '.media-heading <',
         keywords: ["1"]
     }
-    
-]
+];

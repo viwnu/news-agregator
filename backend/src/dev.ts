@@ -3,7 +3,10 @@ import bodyParser from "body-parser"
 import cors from "cors"
 // import { createProxyMiddleware } from 'http-proxy-middleware'
 import os from "os"
-import { kv } from '@vercel/kv'
+
+import clearDataBase from './clearDataBase'
+import setDefaultDataBase from './setDefaultDataBase'
+
 
 const app = express()
 const port = 8000
@@ -20,24 +23,17 @@ app.use(
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-app.get("/api/deep", async function (req, res) {
+
+
+app.get("/api/dev", async function (req, res) {
   try {
-    console.log(req.query.name)
+    console.log('in api/dev req.query.default: ', req.query.default)
+    const clearDataBaseResult = await clearDataBase()
+    console.log('clearDataBaseResult: ', clearDataBaseResult)
 
-    const list = await kv.lrange('agregations', 0, -1) as {id: string}[]
-    console.log('the list: ', list)
-    
-    list.forEach(async item => {
-      if (item.id) {
-        console.log('the id: ', item.id);
-        await kv.getdel(item.id)
-      }
-      
-    })
-    const lpoped = await kv.lpop('agregations', 100)
-    console.log('lpoped: ', lpoped)
+    const setDefaultResult = await setDefaultDataBase(req.query.default === 'true')
 
-    res.send("hi from deep, and the query patam is: " + req.query.name)
+    res.send("hi from dev! " + req.query.default ? `database default set is: ${setDefaultResult}` : '')
   } catch (error) {
     res.send('in deep: ' + error)
   }

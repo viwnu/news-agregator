@@ -1,30 +1,28 @@
 import { useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
-import { Box, Button, CircularProgress, ListItem, List, FormControl, IconButton, Input, TextField, Typography } from '@mui/material'
-
-
-
-import ClearIcon from '@mui/icons-material/Clear'
-
-import { useAddAgregationMutation, useDeleteAgregationMutation, useGetSingleAgregationQuery, usePatchAgregationMutation } from '../../app/store/api'
-import useAgregationForm from './useAgregationForm'
 import { nanoid } from '@reduxjs/toolkit'
+import { Box, Button, CircularProgress, FormControl, TextField, Typography } from '@mui/material'
 
-import { InputKeyboardEvent } from './useAgregationForm'
+import {
+    useAddAgregationMutation,
+    useDeleteAgregationMutation,
+    useGetSingleAgregationQuery,
+    usePatchAgregationMutation
+} from '../../app/store/api'
+import useAgregationForm from './useAgregationForm'
+
+import type { InputKeyboardEvent } from './useAgregationForm'
+import Keywords from './Keywords'
+
 
 export default function AgregatorForm() {
     const {
         newAgregation, urlInvalid, onKeyDown, onKeyUp, deleteKeyword, changeEndpoint, setNewAgreagtion
     } = useAgregationForm()
 
-    console.log('in agregation form', newAgregation)
-    console.log('url is valid', urlInvalid)
-
 
     const { agregationId } = useParams()
-    console.log('Id from params', agregationId)
     const {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         data: agregation,
         isFetching,
         isSuccess,
@@ -45,6 +43,8 @@ export default function AgregatorForm() {
                 setNewAgreagtion({
                     title: '',
                     url: '',
+                    baseUrl: '',
+                    selector: '',
                     keywords: [],
                     id: nanoid()
                 })
@@ -57,8 +57,8 @@ export default function AgregatorForm() {
     const [deleteAgregation, { isLoading: isDeleting }] = useDeleteAgregationMutation()
 
     const handleSubmit = async () => {
-        console.log('handle submit hav an agregation: ', agregation)
-        console.log('handle submit hav an new agregation: ', newAgregation)
+        console.log('handle submit have an agregation: ', agregation)
+        console.log('handle submit have an new agregation: ', newAgregation)
 
         
         try {
@@ -83,6 +83,8 @@ export default function AgregatorForm() {
 
     const nameInputRef = useRef<HTMLDivElement>(null)
     const endpointInputRef = useRef<HTMLDivElement>(null)
+    const baseUrlInputRef = useRef<HTMLDivElement>(null)
+    const selectorInputRef = useRef<HTMLDivElement>(null)
     const keywordInputRef = useRef<HTMLDivElement>(null)
     
     let count = 0
@@ -125,68 +127,31 @@ export default function AgregatorForm() {
                             required
                             size='small'
                         />
-                        <Box>
-                            <List
-                                style={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    flexWrap: 'wrap',
-                                    padding: 1,
-                                }}
-                            >
-                                {/* <ListSubheader>KeyWords</ListSubheader> */}
-                                {newAgregation.keywords.map((word, index) => {
-                                    return (
-                                        <ListItem
-                                            key={index}
-                                            sx={{
-                                                width: 'min-content',
-                                                padding: 1
-                                            }}
-                                        >
-                                            <Box
-                                                sx={{
-                                                    display: 'flex',
-                                                    justifyContent: 'flex-start',
-                                                    alignItems: 'center',
-                                                    backgroundColor: '#eafae8',
-                                                    paddingLeft: 1,
-                                                    borderRadius: 2,
-                                                }}
-                                            >
-                                                <Typography>{word}</Typography>
-                                                <IconButton
-                                                    size='small'
-                                                    onClick={() => deleteKeyword(index)}
-                                                ><ClearIcon/></IconButton>
-                                            </Box>
-
-                                        </ListItem>
-                                    )
-                                })}
-                                <ListItem
-                                    key='enterKeyword'
-                                    sx={{
-                                        width: 'fit-content',
-                                        padding: 1
-                                    }}
-                                >
-                                    <Input
-                                        ref={keywordInputRef}
-                                        placeholder='add keyword'
-                                        onKeyDown={onKeyDown}
-                                        onKeyUp={onKeyUp}
-                                        required
-                                        disableUnderline
-                                        sx={{
-                                            backgroundColor: '#e8f2fa',
-                                            borderRadius: 2,
-                                            paddingLeft: 1
-                                        }}
-                                    />
-                                </ListItem>
-                            </List>
-                        </Box>
+                        <TextField
+                            ref={baseUrlInputRef}
+                            disabled={false}
+                            label='Base url'
+                            value={newAgregation.baseUrl}
+                            onChange={e => setNewAgreagtion({...newAgregation, baseUrl: e.target.value})}
+                            required
+                            size='small'
+                        />
+                        <TextField
+                            ref={selectorInputRef}
+                            disabled={false}
+                            label='Selector'
+                            value={newAgregation.selector}
+                            onChange={e => setNewAgreagtion({...newAgregation, selector: e.target.value})}
+                            required
+                            size='small'
+                        />
+                        <Keywords
+                            keywords={newAgregation.keywords}
+                            deleteKeyword={deleteKeyword}
+                            onKeyDown={onKeyDown}
+                            onKeyUp={onKeyUp}
+                            keywordInputRef={keywordInputRef}
+                        />
                         <Box
                             sx={{
                                 alignSelf: 'flex-end',
@@ -223,9 +188,7 @@ export default function AgregatorForm() {
                     </FormControl>
                 )
             }
-
             <Typography variant='overline'>Form rendered {count} times</Typography>
-            
         </Box>
     )
 }

@@ -2,6 +2,8 @@ export type Agregation = {
     id: string,
     title: string;
     url: string;
+    baseUrl: string;
+    selector: string;
     keywords: string[];
 }
 

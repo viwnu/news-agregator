@@ -17,7 +17,8 @@ const body_parser_1 = __importDefault(require("body-parser"));
 const cors_1 = __importDefault(require("cors"));
 // import { createProxyMiddleware } from 'http-proxy-middleware'
 const os_1 = __importDefault(require("os"));
-const kv_1 = require("@vercel/kv");
+const clearDataBase_1 = __importDefault(require("./clearDataBase"));
+const setDefaultDataBase_1 = __importDefault(require("./setDefaultDataBase"));
 const app = (0, express_1.default)();
 const port = 8000;
 app.use((0, cors_1.default)({
@@ -27,21 +28,14 @@ app.use((0, cors_1.default)({
 //Here we are configuring express to use body-parser as middle-ware.
 app.use(body_parser_1.default.urlencoded({ extended: false }));
 app.use(body_parser_1.default.json());
-app.get("/api/deep", function (req, res) {
+app.get("/api/dev", function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            console.log(req.query.name);
-            const list = yield kv_1.kv.lrange('agregations', 0, -1);
-            console.log('the list: ', list);
-            list.forEach((item) => __awaiter(this, void 0, void 0, function* () {
-                if (item.id) {
-                    console.log('the id: ', item.id);
-                    yield kv_1.kv.getdel(item.id);
-                }
-            }));
-            const lpoped = yield kv_1.kv.lpop('agregations', 100);
-            console.log('lpoped: ', lpoped);
-            res.send("hi from deep, and the query patam is: " + req.query.name);
+            console.log('in api/dev req.query.default: ', req.query.default);
+            const clearDataBaseResult = yield (0, clearDataBase_1.default)();
+            console.log('clearDataBaseResult: ', clearDataBaseResult);
+            const setDefaultResult = yield (0, setDefaultDataBase_1.default)(req.query.default === 'true');
+            res.send("hi from dev! " + req.query.default ? `database default set is: ${setDefaultResult}` : '');
         }
         catch (error) {
             res.send('in deep: ' + error);

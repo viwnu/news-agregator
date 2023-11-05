@@ -2,12 +2,14 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react'
 
 import
 { Agregation, type AgregationsState } from '../types/redux'
-
+import { base } from '../../base'
+import { createSelector } from '@reduxjs/toolkit'
+import { RootState } from './rootReducer'
 
 export const rootAPISlice = createApi({
   reducerPath: 'apiSlice',
   baseQuery: fetchBaseQuery({
-    baseUrl: '/api'
+    baseUrl: base + '/api'
   }),
   tagTypes: ['agregation'],
   endpoints: (builder) => ({
@@ -21,6 +23,7 @@ export const rootAPISlice = createApi({
             ]
             : [{ type: 'agregation'}],
         transformResponse: (responseData: Agregation[]) => {
+          
           return {agregations: responseData}
         }
     }),
@@ -63,3 +66,27 @@ export const {
   usePatchAgregationMutation,
   useDeleteAgregationMutation,
 } = rootAPISlice
+
+
+
+const selectAgregationsResult = rootAPISlice.endpoints.getAgregations.select()
+const selcetItemId = (state: RootState, id: string): string => id
+
+
+const emptyAgregation: Agregation = {
+  id: '',
+  title: '',
+  url: '',
+  baseUrl: '',
+  selector: '',
+  keywords: []
+}
+
+export const selectSingleAgregation = createSelector(
+  [selectAgregationsResult, selcetItemId],
+  (agregationsResult, id) => {
+    console.log('in api: ', agregationsResult)
+    const agregation = agregationsResult.data?.agregations.find(agregation => agregation.id === id)
+    return (agregation ?? emptyAgregation)
+  }
+)

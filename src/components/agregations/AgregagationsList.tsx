@@ -1,6 +1,6 @@
-import { Alert, Button, CircularProgress, List, ListItem, ListItemText } from '@mui/material'
+import { Button, CircularProgress, List, ListItem, ListItemText, Typography, Link, Box } from '@mui/material'
 import { useGetAgregationsQuery } from '../../app/store/api'
-import { Link } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router-dom'
 
 export default function AgregagationsList() {
     const {
@@ -8,7 +8,7 @@ export default function AgregagationsList() {
         isLoading,
         isSuccess,
         isError,
-        error
+        // error
     } = useGetAgregationsQuery()
 
     let content
@@ -18,11 +18,35 @@ export default function AgregagationsList() {
     } else if (isSuccess) {
         const agregations = resBody.agregations
         console.log('agregations is: ', agregations)
-        content = <List>
+        content = <List
+            sx={{
+                pl: 1,
+                pr: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 1,
+            }}
+        >
             {agregations.map(agregation => (
-                <ListItem key = {agregation.id}>                    
-                    <ListItemText primary={ agregation.title } />
-                    <Link to={`/${agregation.id}`}>
+                <ListItem key = {agregation.id} 
+                    sx={{
+                        boxShadow: 2,
+                        borderRadius: 2,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                    }}
+                >                    
+                    <Box component={RouterLink} to={`/news/${agregation.id}`}
+                        sx={{
+                            width: 'inherit',
+                            textDecoration: 'none',
+                            color: 'inherit'
+                        }}
+                    >
+                        <ListItemText primary={ agregation.title } />
+                    </Box>
+                    <Link component={RouterLink} to={`/${agregation.id}`}>
                         <Button 
                             size='small'
                             sx={{
@@ -37,7 +61,8 @@ export default function AgregagationsList() {
             
         </List>
     } else if (isError) {
-        content = <Alert severity='error'>{JSON.stringify(error)}</Alert>
+        // content = <Alert severity='error'>{JSON.stringify(error)}</Alert>
+        content = <Typography variant='overline' >Nothing to display</Typography>
     }
 
     return (

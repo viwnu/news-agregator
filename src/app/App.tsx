@@ -7,6 +7,7 @@ import Header from '../components/header/Header'
 // import NewsFeed from '../components/newsFeed/NewsFeed'
 import SideMenu from '../components/sideMenu/SideMenu'
 import { Route, Routes } from 'react-router-dom'
+import { NewsFeed } from '../components/newsFeed/NewsFeed'
 
 const drawerWidth = 240
 
@@ -43,11 +44,12 @@ export default function App() {
                         <Route path="/" element={<AgregatorForm/>} />
                         <Route path="/newAgregation" element={<AgregatorForm/>} />
                         {/* <Route path="/form" element={<CreateAgregatorForm/>} /> */}
-                        <Route path="/:agregationId" element={<AgregatorForm/>} />
+                        <Route path='/:agregationId' element={<AgregatorForm/>} />
+                        <Route path='/news/:agregationId' element={<NewsFeed/>} />
                         <Route path='/*' element={<><p>Wrong URL</p></>}/>
                         <Route element={<><p>Page Not Founf</p></>}/>
                     </Routes>
-                    <Typography>App rended {count} times</Typography>
+                    <Typography variant='caption' >App rended {count} times</Typography>
                 </Box>
             </Box>
         </>
