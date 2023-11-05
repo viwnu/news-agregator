@@ -1,1 +1,1 @@
-export const base = 'https://news-agregator-8sv9iw553-viwnus-projects.vercel.app'
+export const base = ''
